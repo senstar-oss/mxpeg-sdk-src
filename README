@@ -1,0 +1,433 @@
+//           ///          //                                  C++ Cross Platform
+//          /////        ////       MxPEG
+//         /// XXX     XXX ///            ///////////   /////////     ///   ///
+//        ///    XXX XXX    ///         ///             ///    ///   ///  ///
+//       ///       XXX       ///         /////////     ///      //  //////
+//      ///      XXX XXX      ///               ///   ///    ///   ///  ///
+//     ////    XXX     XXX    ////    ////////////  //////////    ///   ///
+//    ////                     ////
+//   ////  M  O  B  O  T  I  X  ////////////////////////////////////////////////
+//  //// Security Vision Systems //////////////////////////////////////////////
+//
+//
+///////
+     //
+     //  C++ MxPEG Decoder Library
+     //  (a part of the MOBOTIX MxPEG SOFTWARE DEVELOPMENT KIT)
+     //
+     //  MOBOTIX AG Security Vision Systems
+     //  Luxemburger Str. 6
+     //  D-67657 Kaiserslautern
+     //  Germany
+     //
+///////
+
+
+    CONTENTS
+
+    I.   WHAT IS THE MxPEG SDK C++ LIBRARY?
+        I.1. OVERVIEW
+        I.2. INTENDED AUDIENCE
+        I.3. REQUIREMENTS
+        I.4. AVAILABLE DISTRIBUTIONS
+        I.5. LICENSING CONSIDERATIONS
+    II.  WHAT HAS CHANGED SINCE v0.9.1
+    III. COMPILATION
+        III.1. A NOTE ON COMPONENTS
+        III.2. BUILD SYSTEM SETUP
+        III.3. SOURCE TREE DIRECTORY STRUCTURE
+        III.4. COMPILATION ON WINDOWS AND UNDER MICROSOFT VISUAL C++
+    IV.  SAMPLE APPLICATIONS
+        IV.1. "mxgconv" - MxPEG STREAM CONVERTER
+        IV.2. MxPEG Player - NO LONGER INCLUDED
+    V.   STATUS NOTES
+        V.1. LIMITATIONS IN THIS RELEASE
+        V.2. VERSION HISTORY
+
+
+--------------------------------------------------------------------------------
+I.   WHAT IS THE MxPEG SDK C++ LIBRARY?
+--------------------------------------------------------------------------------
+
+I.1. OVERVIEW
+
+This C++ library is released in open source form as part of MOBOTIX MxPEG
+Software Development Kit (MxPEG SDK) and provides portable MxPEG decoding to
+system integrators. It runs on Windows, Linux and Mac OS X.
+
+System integrators are encouraged to incorporate the code in their own software
+products. Since the sources are freely available, potential shortcomings if
+they should be considered as such can be easily fixed, as missing features for
+a given specific application scenario can be added.
+
+To illustrate how the library classes are intended to be put to use, the SDK
+includes the demo application "mxgconv". It is a UNIX-fashion commandline tool
+that, next to its aforementioned instructive qualities, serves the practical
+purpose of converting MxPEG streams to various other formats.
+
+The most recent version of the library is available for download on
+http://developer.mobotix.com.
+
+Please note that MOBOTIX AG's regular product support does not extend to
+MxPEG SDK. However, feel free to contact mxpeg@mobotix.com if you have questions
+regarding this software - any information about discovered problems, bug reports
+or feedback of any other sort will be greatly appreciated and will help us
+improve the quality of this package.
+
+I.2. INTENDED AUDIENCE
+
+The intended audience targetet by this SDK are developers and system integrators
+interested in producing customized surveillance solutions based on or including
+MOBOTIX Security Vision products. A familiarity with object oriented software
+design, solid experience with C++ development and a basic understanding in video
+data processing is assumed.
+
+I.3. REQUIREMENTS
+
+    o Standard PC or Apple Macintosh computer
+    o LINUX, Mac OS X or WINDOWS operating system
+    o C++ compiler
+      On LINUX and Mac OS X, the system compiler g++ is the choice. On WINDOWS
+      you will most probably use Visual C++, but we've also tested positively
+      with MinGW/g++.
+    o Solid experience with C++ development. While we provide the source code,
+      it is you who will have to set up the build system for your specific
+      target platform, compiler package and application setup.
+    o OPTIONAL: Intel Performance Primitives (IPP) 5.0 library
+      The source tree's IPPAcceleratedMxPEGCompontent folder contains support
+      for Intel's IPP library. If you have it at hand, you should consider
+      enabling it - it dramatically increases decoding performance. However, it
+      is not available on PowerPC (older Apple Macintosh models).
+    o OPTIONAL: Trolltech Qt 4.x
+      Although not being necessary to properly use the library, the
+      IOKitComponent folder contains additional Qt-dependent classes that
+      implement comfortable downloading of camera live streams and configuration
+      data via HTTP. If you have Qt, you might want to use them.
+
+I.4. AVAILABLE DISTRIBUTIONS
+
+MOBOTIX releases the MxPEG SDK C++ library as an open source distribution. For
+convenience, however, binaries of the sample application "mxgconv" are also
+available for Windows, Linux and Mac OS X (Intel).
+
+I.5. LICENSING CONSIDERATIONS
+
+This software is made available under the BSD licence. Please refer to the file
+LICENSE for details.
+
+
+--------------------------------------------------------------------------------
+II.  WHAT HAS CHANGED SINCE v0.9.1
+--------------------------------------------------------------------------------
+    
+    o First off, there's been a change in functional scope. The package no
+      longer contains any user interface and/or video display elements, but
+      concentrates on the actual MxPEG decoding instead. Thus, the dependency on
+      Qt has been eliminated. As another consequence the portable MxPEG Player
+      application is no longer part of MxPEG SDK.
+    
+    o Audio Support : The decoder interfaces have been extended in order to also
+      hand decoded audio data over to the client application code for further
+      processing. Note however that in order to actually hear anything, you will
+      have to provide your own audio output routines for your specific target
+      platform - a fact that is now also true for displaying video.
+    
+    o As was requested by many customers, the package now also compiles under
+      Microsoft Visual C++. At MX, we're working and testing with Visual Studio
+      2005.
+
+    o We are currently migrating considerable parts of our codebase to a
+      component oriented design, with the MxPEG SDK C++ package actually being
+      a subset of it. As a result, the MxPEG SDK code has also been reworked and
+      molded into components, and its infrastructure and interfaces have
+      received a fair amount of streamlining in the process.
+    
+    o The actual MxPEG decoder engine has grown more mature: it implements a
+      larger subset of the JPEG stream specification including an additional
+      subsampling mode (enabling it to also properly digest MJPEG streams coming
+      in from certain Axis and MerritLiLin camera models), hands more frame
+      parameters over to the client application and has an improved handling of
+      error conditions.
+
+
+--------------------------------------------------------------------------------
+III. COMPILATION
+--------------------------------------------------------------------------------
+
+III.1. A NOTE ON COMPONENTS
+
+This section is only for your information. If it sounds confusing at first,
+there's no need to worry.
+
+It has been mentioned earlier that as part of a larger project, the SDK code has
+been switched to a kind of component oriented design. Among other things, this
+had to do with improving the maintainability of a large code base by eliminating
+include dependencies betweeen individual system components, and with allowing
+for the dynamic loading of optional application functionality (plugin concept).
+
+The basic idea behind the whole thing is that the instantiation of classes no
+longer happens by directly #including headers of specific implementations and
+using the "new" operator. Instead, one now instantiates objects by #including
+only some global and invariant interface specification headers, and by then
+asking a dedicated component manager to provide a component instance
+implementing a certain set of those interfaces. The component manager is
+implemented by mx::Framework, and the global interfaces are specified in
+shared/interfaces (compare source tree description below). These only specify
+pure virtual methods and thus abstract from the headers of actual component
+implementations. Since component code will only use the global interfaces when
+accessing objects instantiated from other components, inter-component #include
+dependencies are altogether eliminated.
+
+To service the plugin idea mentioned above, the code in the folders named
+"*Component" is originally intended to be compiled into shared libraries (.DLL,
+.so or .dylib files on Windows, Linux and Macintosh) that get then dynamically
+loaded by the component manager as plugins (at run-time). It is not necessary
+that you do so, though.
+
+Since it is still entirely possible to conventionally link the classes from
+"*Component" folders, if you do not choose to, you won't have to worry about any
+of the whole component stuff except for when you instantiate objects implemented
+in those folders. Which should no longer be done by "new", but via
+mx::Framework::newComponentInstance(). The demo application "mxgconv" shows how.
+It also illustrates how to use statically linked component code.
+
+III.2. BUILD SYSTEM SETUP
+
+At MX, we're using Qt, and as a consequence we're using qmake as our build
+system. For the possibility that you are using Qt also, we have included the
+necessary .pro-files in the distribution. But since we do not know what platform
+and compiler system you're actually working on, we do no longer provide any
+specific makefiles beyond that. So in case you do not use qmake, you will have
+to set up your build system / project for yourself, which, in case you are
+seriously interested in developing with MxPEG SDK, will hardly pose a problem.
+
+While the included qmake .pro-files are basically configured for the plugin
+configuration described earlier, the demo application "mxgconv" illustrates the
+simple statically linked case:
+
+    (1) Simply add all .h and .cpp files that you wish to use to your project,
+        except for that one .cpp file in each "*Componment" folder that has the
+        same name as that folder.
+    (2) Observe in mxgconv/mxgconv.cpp's main() routine that when creating
+        the application's mx::Framework instance, you have to pass to its
+        constructor the result list of the
+        
+           mxpeg_sdk::createStaticallyLinkedComponents()
+        
+        routine that initializes the SDK components for the conventionally
+        linked case.
+    (3) In case you're working with Microsoft Visual C++, have the
+        MX_PLATFORM_WINDOWS and MX_STATIC_LIB #define macros be passed to the
+        compiler (compare the section on VC++ below). Also be sure that you are
+        building a console application (because "mxgconv" is a commandline
+        application) and that you link against ws2_32.lib and user32.lib.
+
+Note that for "mxgconv", the optional IPP- and Qt-dependent classes are per
+default disabled (compare mxgconv.pro and
+                  mxpeg_sdk/static_component_bootstrap.cpp").
+If you choose to re-enable them, you obviously will have to add the IPP and/or
+Qt header directories to your project's include path and the respective library
+locations to the linker path. To enable IPP-accelerated decoding, adding the
+"*IPP" classes is enough because the component manager will automatically
+choose the enhanced versions over the portable software-only implementations.
+
+Note also that the provided mxpeg_sdk::createStaticallyLinkedComponents()
+routine is meant as a template. If you wish to use your own subset of SDK
+classes, feel free to add just these classes to you project and to provide an
+alternate, appropriately adapted bootstrapping routine for yourself.
+
+Finally, if you should in fact use qmake and the .pro-files prepared by us, be
+sure to set the following environment variables:
+    o MX_SDK_CONFIG : space-separated tokens controlling the build process
+         mx_release_build : don't build in the default debug mode, produce a
+                            release version instead
+         mx_no_ipp        : exclude IPP support from compilation
+    o MX_IPP_DIR    : if IPP support is not disabled in MX_SDK_CONFIG (see
+                      above), have this environment variable point to your IPP
+                      installation
+
+III.3. SOURCE TREE DIRECTORY STRUCTURE
+
+The source tree's directory structure largely corresponds to the software's
+layer configuration, which is as follows:
+
+    ----------------------------
+    mxgconv                        demo application
+    ----------------------------
+    IPPAcceleratedMxPEGComponent   optional IPP-support for accelerated decoding
+    MxPEGCoreComponent             portable MxPEG decoder implementation
+    IOKitComponent                 I/O classes for accessing files and cameras
+    ----------------------------
+    Framework                      MX component manager
+    mxmQt (optional)               some convenient mxm/Qt glue (when using Qt)
+    mxm                            MX C++ runtime platform
+    ----------------------------
+
+Apart from that, the folder "shared/interfaces" contains the global interfaces
+for the component design (see above).
+
+The remaining folders are
+    o mxpeg_sdk                    bootstraps statically linked components
+    o settings                     global settings for qmake-based building
+    o artwork                      logos for the online documentation
+
+III.4. COMPILATION ON WINDOWS AND UNDER MICROSOFT VISUAL C++
+
+If you're developing to the Windows platform, have the
+    
+    MX_PLATFORM_WINDOWS
+    
+#define macro be passed to the compiler when compiling the MxPEG SDK code. This
+is to circumvent the pitfalls resulting from the fact that on Windows things
+keep being done a little differently, even when standard adherence is claimed.
+
+Upon request of many customers MxPEG SDK now also compiles under Visual C++.
+Since the Microsoft compiler requires some non-standard signature extensions
+when compiling class methods into DLLs, we had to outfit the sources with a
+mechanism providing these when compiling on Windows and under Visual C++:
+    
+    o When compiling MxPEG SDK classes into DLLs you have to set a special
+      *_API_WINDOWS_EXPORTS macro for the compilation. In case of the "mxm"
+      library this would be MXM_CORE_API_WINDOWS_EXPORTS. For classes in a
+      specific source tree folder, inspect the respective .pro-file in that
+      folder to find out about the actual macro needed for these classes.
+      When using the created MxPEG SDK DLLs from a client application, do not
+      set these macros.
+    
+    o When compiling the MxPEG SDK directly (statically) into an application or
+      when building/using it in form of a static library, disable the whole
+      stuff by setting the MX_STATIC_LIB macro for the compilation. Currently
+      this can only be done for the MxPEG SDK code as a whole.
+
+
+--------------------------------------------------------------------------------
+IV.  SAMPLE APPLICATIONS
+--------------------------------------------------------------------------------
+
+IV.1. "mxgconv" - MxPEG STREAM CONVERTER
+
+The UNIX-style command line tool "mxgconv" is a rewrite of the former "mxg2mjpg"
+with the purpose of illustrating both compilation and usage of the current
+version of the SDK classes. It converts an MxPEG stream to various other
+formats, with MJPEG being the default. As it is quite common with UNIX
+filter-like programs, per default the MxPEG stream is read from <stdin> and the
+generated MJPEG stream is written to <stdout>. You can change this default
+behavior via the "if=" and "of=" arguments (run "mxgconv --help" to get a list
+of all possible options).
+
+The new "mxgconv" features writing frames to individual files - for example you
+can now easily convert an MxPEG stream to individual JPEG images, with each one
+being written to its own file using automatic numbering. If you wish, you can
+also limit the total number of generated files, in which case these files are
+written to in a ring buffer fashion until the stream is finished.
+
+If on the other hand you choose to generate a stream-type format, you can
+specify an optional separator string that gets written in between consecutive
+frames. Note that in this case "mxgconv" differs from "mxg2mjpg"'s behavior in
+that it does not write any additional stuff at the beginning or at the end of
+the target stream. The separator function could be useful when running "mxgconv"
+from a CGI script sending an MJPEG stream via the WWW.
+
+"mxgconv" also features raw modes: it can produce raw RGB or YUV frames, both
+either in stream mode or in individual file mode. The RGB frames produced have
+three bytes per pixel, and the pixels get written out in the order of
+RGBRGBRGB... Raw YUV mode on the other hand outputs the frames in the popular
+yv12 format. Note that the raw frame formats generated by "mxgconv" are
+digestible by the common transcoding utilities transcode and MPlayer/mencoder
+that can as a consequence be used to further process the stream data.
+
+Note that the "framerate stabilization" mode that was offered by "mxg2mjpg" is
+currently not available.
+
+Note also that "mxgconv" now processes arguments differently because it now
+comfortably evaluates user input using an mxmPerlStyleHash initialized from
+the first commandline argument. That much said, "mxgconv"'s usage is as follows:
+
+   MxPEG stream converter, (c) 2005-2007 MOBOTIX Security Vision Systems
+   USAGE: mxgconv arg1=val1,arg2=val2,...
+      if                        : input file (- is stdin, default)
+      of                        : output file without extension
+                                  (- is stdout, default)
+      format
+         mjpg                   : Motion-JPEG (default)
+         jpeg                   : individual JPEG images
+         rgb, yuv               : individual raw RGB or YUV (yv12) frames
+         rgb_stream, yuv_stream : raw RGB or YUV (yv12) stream
+      file_num                  : maximum number of output files
+                                  (for jpeg, rgb, yuv formats)
+      separator                 : separator string (for mjpg, *_stream formats)
+   EXAMPLES:
+      mxgconv if=test_data.mxg,of=another_test,format=jpeg
+      curl <url> | mxgconv >another_test.mjpg
+
+IV.2. MxPEG Player - NO LONGER INCLUDED
+
+Since MxPEG SDK no longer includes user interface elements, the MxPEG Player
+demo application is no longer available as source code.
+
+
+--------------------------------------------------------------------------------
+V.   STATUS NOTES
+--------------------------------------------------------------------------------
+
+V.1. LIMITATIONS IN THIS RELEASE
+
+    o When processing streams using the new Y21U11V11 subsampling mode as do
+      for example the streams generated by certain Axis camera models, for
+      some unusual vertical frame resolutions it is possible that up to eight
+      lines of pixels at the bottom of the image are not properly updated. This
+      bug is a trivial one, and it will be fixed in an upcoming service release.
+
+V.2. VERSION HISTORY
+
+    v1.0.0
+        
+        o audio support, in that audio data received from the MxPEG stream is
+          now handed over to client application code for further processing
+        
+        o package now also compiles under Microsoft Visual C++ (tested with
+          Visual Studio 2005)
+        
+        o stream converter demo application now also writes individual JPEG
+          files with automatic numbering
+        
+        o cleaned up infrastructure and streamlined interfaces as a result of a
+          port to a component oriented design
+        
+        o more mature decoder engine: better JPEG standard support, additional
+          Y21U11V11 subsampling mode, more data forwarded to application context
+          and improved error handling
+        
+        o user interface elements have been removed, MxPEG Player source code is
+          no longer included
+        
+        o stream converter demo application no longer features "framerate
+          stabilization" function
+        
+    v0.9.1
+        
+        o raw RGB/yv12 frame dump mode for mxg2mjpg to allow interfacing with
+          transcode and MPlayer/mencoder
+        
+        o output framerate stabilization for mxg2mjpg 
+        
+    v0.9
+    
+        o live stream viewer
+        
+        o GUI elements and artwork
+        
+        o fixed software-only MxPEG-to-JPEG converter on PowerPC (Mac OS X)
+        
+        o user faststream authentication
+        
+        o reorganisation of codebase, multi-target build system
+        
+        o removal of "hacks" introduced into v0.8.3 release due to time pressure
+    
+    v0.8.3
+    
+        o MxPEG decoding and MxPEG-to_JPEG conversion (both portable "software
+          only" and accelerated IPP-based implementations)
+
+        o portable and modular MxPEG decoder concept

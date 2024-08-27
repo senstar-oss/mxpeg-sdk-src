@@ -1,0 +1,3 @@
+- mxmIPAddress has to be ported to mxcam!!! (has lazy DNS resolving!)
+- mxm::rttiClassName() in mxsdk guards against 0-ptrs
+- mxmException modified in mxsdk
