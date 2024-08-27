@@ -110,7 +110,6 @@ namespace mx {
        *  precision (default).
        */
       virtual void writeIndividualFiles(int num) = 0;
-      
    };
 };
 

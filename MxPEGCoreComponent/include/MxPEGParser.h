@@ -155,7 +155,6 @@ namespace mx {
                         };
       
     private:
-      IStreamSource                *Source;
       IUndecodedMxPEGFrameReceiver *FrameReceiver;
       bool                         Active;
       
@@ -186,7 +185,20 @@ namespace mx {
     public:
       MxPEGParser();
       ~MxPEGParser();
-    
+
+	  // This new buffer replaces stream source
+	  unsigned char * m_pBufferIn;
+
+	  void setBuffer(unsigned char *pBuffer)
+	  {
+		  m_pBufferIn = pBuffer;
+	  };
+
+	  unsigned char * getBuffer()
+	  {
+		  return m_pBufferIn;
+	  };
+
     public:
       //! (Re)implemented.
       mxm::smart<mxmStringList> enumerateInterfaces();

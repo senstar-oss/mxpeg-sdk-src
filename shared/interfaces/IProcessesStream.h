@@ -92,6 +92,9 @@ namespace mx {
      //! Returns whether or not the attached stream source is still
      //! operational ("up").
      virtual bool sourceStillUp() = 0;
+
+	virtual void setBuffer(unsigned char *pBuffer) = 0;
+	virtual unsigned char * getBuffer() = 0;
   };
 };
 

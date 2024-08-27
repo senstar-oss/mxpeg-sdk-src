@@ -83,6 +83,13 @@ namespace mx {
    public:
     //! Used to send stream bytes to the receiver.
     virtual void receiveStreamBytes(const mxm::u8 *bytes, int byte_num) = 0;
+	virtual void setOutBuffer(unsigned char * /*pBuffer*/){};
+	virtual unsigned char * getOutBuffer() {return NULL;};
+	virtual void setOutLength(int iLen) = 0;
+	virtual int  getOutLength() = 0;
+	virtual void setOutLengthPointer(int * /*pLen*/) {};
+	virtual int * getOutLengthPointer() {return NULL;};
+
   };
 };
 

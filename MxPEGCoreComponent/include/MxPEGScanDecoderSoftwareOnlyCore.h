@@ -165,7 +165,7 @@ namespace mx {
               mxm::sendStatusMessage(mxm::FailureMessage,
                                      "not more scan bytes!",
                                      this);
-              std::exit(666);
+              //std::exit(666);
             }
             else {
               CurrentScanByte++;
@@ -176,7 +176,7 @@ namespace mx {
             mxm::sendStatusMessage(mxm::FailureMessage,
                                    "unexpected marker encountered!",
                                    this);
-            std::exit(666);
+            //std::exit(666);
           }
         
           //mxcpc::sendStatusMsg("warning: 0xff in datastream, feeding now, checking later!");
@@ -223,7 +223,7 @@ namespace mx {
           mxm::sendStatusMessage(mxm::FailureMessage,
                                  " !!! invalid codeword !!!",
                                  this);
-          std::exit(666);
+          //std::exit(666);
           return(0);
         }
       } while(!current_huffman_node->IsLeaf);

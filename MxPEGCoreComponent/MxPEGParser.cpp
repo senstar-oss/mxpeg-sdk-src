@@ -75,7 +75,6 @@
 
 mx::MxPEGParser::MxPEGParser() {
    
-   Source           = 0;
    FrameReceiver    = 0;
    Active           = false;
    
@@ -112,7 +111,6 @@ mx::MxPEGParser::MxPEGParser() {
 
 mx::MxPEGParser::~MxPEGParser() {
    
-   delete Source;
    delete FrameReceiver;
    
    delete[] PrefetchBuffer;
@@ -131,13 +129,8 @@ mxm::smart<mxmStringList> mx::MxPEGParser
 }
 
 
-void mx::MxPEGParser::setStreamSource(IStreamSource *stream_source) {
-   
-   if(   Active
-      || Source) mxm::terminal("stream source is already set!",
-                               this);
-   
-   Source = stream_source;
+void mx::MxPEGParser::setStreamSource(IStreamSource * /*stream_source*/)
+{
 }
 
 
@@ -155,7 +148,9 @@ void mx::MxPEGParser
 
 int mx::MxPEGParser::processStreamBytes(int num) {
   
-  if(!Active) activate();
+	mxm::sendStatusMessage(mxm::DebugMessage, mxmString("New frame: size ") + num, this);
+
+	if (!Active) activate();
   
   int bytes_allowed;
   unsigned char *buff_ptr;
@@ -168,18 +163,18 @@ int mx::MxPEGParser::processStreamBytes(int num) {
     mxm::sendStatusMessage(mxm::WarningMessage,
                            "prefetch buffer overflow!",
                            this);
-    std::exit(666);
-    // TODO !
+	return 0;
   }
-  
+  State = AwaitMarker;	// reset state, assuming we passing one new frame every call
+
   bytes_processed = 0;
   while(bytes_allowed > 0) {
    
-    buff_ptr = PrefetchBuffer + PrefetchedBytes;
-    bytes_read = Source->fetchStreamBytes(buff_ptr, bytes_allowed); 
-    if(!bytes_read) break;
-    
-    PrefetchedBytes += bytes_read;
+	  // AImetis change to process entire received frame in one call
+	bytes_read = num;
+	buff_ptr = (unsigned char *)m_pBufferIn;
+
+	PrefetchedBytes = 0;
    
     feedBytes(buff_ptr, bytes_read);   // might remove entire frame image and
                                        // thus modify _PrefetchedBytes_ variable
@@ -188,17 +183,13 @@ int mx::MxPEGParser::processStreamBytes(int num) {
     bytes_allowed   -= bytes_read;
   }
   
-  if(Source->errorState()) setErrorState();
-  
   return(bytes_processed);
 }
 
 
-bool mx::MxPEGParser::sourceStillUp() {
-   
-   if(!Active) activate();
-   
-   return(Source->stillUp());
+bool mx::MxPEGParser::sourceStillUp()
+{
+   return true;
 }
 
 
@@ -225,7 +216,6 @@ void mx::MxPEGParser::feedBytes(unsigned char *buffer,
   unsigned char marker_type;
   int width, height;
   bool need_to_copy_down;
-  mxm::u8 u8_value;
   int quantization_table_target,
       huffman_table_class,
       huffman_table_target;
@@ -331,12 +321,14 @@ void mx::MxPEGParser::feedBytes(unsigned char *buffer,
       
       // JPEG comment: payload already read...
       case M1IMG:
-        State = AwaitMarker;
+		mxm::sendStatusMessage(mxm::DebugMessage, mxmString("Processing M1IMG"), this);
+		State = AwaitMarker;
         break;
       
       // JPEG comment: payload already read...
       case MxF:
-        std::memcpy(&time_stamp,
+		mxm::sendStatusMessage(mxm::DebugMessage, mxmString("Processing MXF at offset ") + (unsigned)(MarkerPayload - buffer), this);
+	    std::memcpy(&time_stamp,
                     (mxm::u8 *)MarkerPayload + 8,
                     sizeof(time_stamp));
         LocalEndian.convertFromLittle(&time_stamp, sizeof(time_stamp));
@@ -351,7 +343,8 @@ void mx::MxPEGParser::feedBytes(unsigned char *buffer,
       
       // JPEG comment: payload already read - sets bitmap in frame descriptor
       case BitMap:
-        FrameDescriptor.TileBits = &MarkerPayload[12];
+		mxm::sendStatusMessage(mxm::DebugMessage, mxmString("Processing MXM at offset ") + (unsigned)(MarkerPayload - buffer), this);
+		FrameDescriptor.TileBits = &MarkerPayload[12];
         State = AwaitMarker;
         break;
       
@@ -525,6 +518,9 @@ void mx::MxPEGParser::feedBytes(unsigned char *buffer,
          = CurrentBytePtr - FrameDescriptor.ScanBytes;
         FrameDescriptor.ImageLength
          = CurrentBytePtr - FrameDescriptor.StartOfImage;
+
+		need_to_copy_down = true;
+
         State = AwaitMarker;
         break;
        
@@ -745,7 +741,8 @@ label_doScan_begin:
         BytesLeft--;
         if(!BytesLeft) {
           ScanStage = 1;
-          return(false);
+		  mxm::sendStatusMessage(mxm::FailureMessage, "ScanStage 0: no bytes left after FF", this);
+		  return(false);
         }
         else {
           if(*CurrentBytePtr == 0x00) {
@@ -756,14 +753,15 @@ label_doScan_begin:
           else if(*CurrentBytePtr == mxm::JPEG::EOI) {
             CurrentBytePtr++;
             BytesLeft--;
-            return(true);
+			mxm::sendStatusMessage(mxm::FailureMessage, "ScanStage 0: EOI found", this);
+			return(true);
           }
           else {
             mxm::sendStatusMessage(mxm::FailureMessage,
                                    "!!! MxPEG decoder failure "
-                                    "(invalid scan termination) !!!",
+                                    "(ScanStage 0: invalid scan termination) !!!",
                                    this);
-            std::exit(666);
+			return false;
           }
         }
       }
@@ -772,7 +770,8 @@ label_doScan_begin:
         BytesLeft--;
       }
     }
-    return(false);
+	mxm::sendStatusMessage(mxm::FailureMessage, "ScanStage 0: no bytes left", this);
+	return(false);
   }   // stage 0
   
   else {   // stage 1 - read a 0xff, decide whether marker or padding
@@ -792,9 +791,9 @@ label_doScan_begin:
     else {
       mxm::sendStatusMessage(mxm::FailureMessage,
                              "!!! MxPEG decoder failure "
-                              "(invalid scan termination) !!!",
+                              "(ScanStage 1: invalid scan termination) !!!",
                              this);
-      std::exit(666);
+	  return false;
     }
   }   // stage 1
 }
@@ -803,8 +802,6 @@ label_doScan_begin:
 void mx::MxPEGParser::activate() {
    
    if(Active)         mxm::terminal("already active!",
-                                    this);
-   if(!Source)        mxm::terminal("no stream source configured!",
                                     this);
    if(!FrameReceiver) mxm::terminal("no frame receiver configured!",
                                     this);
