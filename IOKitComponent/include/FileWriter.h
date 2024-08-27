@@ -131,6 +131,13 @@ namespace mx {
          return(new Invoker());
       }
       
+
+	  virtual void setOutBuffer(unsigned char * pBuffer){ m_pBuffer = pBuffer;};
+	  virtual unsigned char * getOutBuffer(){return m_pBuffer;};
+	  virtual void setOutLength(int iLen){m_iLen = iLen;};
+	  virtual int  getOutLength(){return m_iLen;};
+	  virtual void setOutLengthPointer(int * pLen){m_pLen = pLen;};
+	  virtual int * getOutLengthPointer(){return m_pLen;};
     private:
       mxmString Filename;
       int       FileDescriptor;
@@ -144,6 +151,9 @@ namespace mx {
            FreshSegment;
       bool HasBeenShutDown;
       
+	  unsigned char * m_pBuffer;
+	  int *			  m_pLen;
+	  int             m_iLen;
     public:
       FileWriter();
       ~FileWriter();

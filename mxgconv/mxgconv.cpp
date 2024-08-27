@@ -65,8 +65,6 @@
   #define STDERR_FILENO 2
 #endif
 
-
-
 #include <mxpeg_sdk/static_component_bootstrap.h>
                                     // for statically linked MxPEG SDK demo case
 
@@ -88,188 +86,187 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "mxgconv.h"
 
+#include "../IOKitComponent/include/FileWriter.h"
+#include "../IOKitComponent/include/StreamFile.h"
 
-int dump_usage(const mxmString &prog_name) {
-   
-   std::puts("MxPEG stream converter"
-              ", (c) 2005-2007 MOBOTIX Security Vision Systems");
-   std::puts((mxmString("USAGE: ")
-               + prog_name
-               + " arg1=val1,arg2=val2,...").text());
-   std::puts("   if                        : input file (- is stdin, default)");
-   std::puts("   of                        : output file without extension");
-   std::puts("                               (- is stdout, default)");
-   std::puts("   format");
-   std::puts("      mjpg                   : Motion-JPEG (default)");
-   std::puts("      jpeg                   : individual JPEG images");
-   std::puts("      rgb, yuv               : individual raw RGB or YUV (yv12) "
-                                             "frames");
-   std::puts("      rgb_stream, yuv_stream : raw RGB or YUV (yv12) stream");
-   std::puts("   file_num                  : maximum number of output files");
-   std::puts("                               (for jpeg, rgb, yuv formats)");
-   std::puts("   separator                 : separator string "
-                                             "(for mjpg, *_stream formats)");
-   std::puts("EXAMPLES:");
-   std::puts("   mxgconv if=test_data.mxg,of=another_test,format=jpeg");
-   std::puts("   curl <url> | mxgconv >another_test.mjpg");
-   
-   return(1);
+#include "../MxPEGCoreComponent/include/DiagnosticsMxPEGTileReceiver.h"
+#include "../MxPEGCoreComponent/include/MxPEGParser.h"
+#include "../MxPEGCoreComponent/include/MxPEGRawFrameDumper.h"
+#include "../MxPEGCoreComponent/include/MxPEGScanDecoderSoftwareOnly.h"
+#include "../MxPEGCoreComponent/include/MxPEGScanToJPEGConverterSoftwareOnly.h"
+
+#ifdef _MANAGED
+#pragma managed(push, off)
+#endif
+
+// BOOL APIENTRY DllMain( HMODULE hModule,
+// 					  DWORD  ul_reason_for_call,
+// 					  LPVOID lpReserved
+// 					  )
+// {
+// 	return TRUE;
+// }
+BOOL APIENTRY DllMain( HMODULE /*hModule*/,
+					  DWORD  ul_reason_for_call,
+					  LPVOID /*lpReserved*/
+					  )
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
+}
+#ifdef _MANAGED
+#pragma managed(pop)
+#endif
+
+// MessageHandler that outputs to Windows debug
+
+class DebugMessageHandler : public mxmStatusMessageHandlerInterface
+{
+	mxm::StatusMessageType m_level = mxm::StatusMessageType::DesperateDebugMessage;
+public:
+	//! Processes the status message as it sees it fit.
+
+	void sendStatusMessage(mxm::StatusMessageType /*msg_type*/,
+		const mxmString & msg,
+		const mxmObject * /*sending_object = 0*/)
+	{
+		mxmString text("mxm: ");
+		text += msg;
+		OutputDebugStringA(text.text());
+	}
+
+	//! Used (e.g. by the central status message facility) to switch the handler
+	//! to a given verbosity level - the handler is free to ignore the request,
+	//! though.
+	void setStatusMessageVerbosity(mxm::StatusMessageType msg_level)
+	{
+		m_level = msg_level;
+	}
+
+	//! Returns the verbosity level currently supported/expected by the handler.
+
+	mxm::StatusMessageType statusMessageVerbosity()
+	{
+		return m_level;
+	}
+};
+
+class CMxpegDecode
+{
+public:
+	CMxpegDecode(){};
+	~CMxpegDecode(){};
+
+	void DecodeMxpeg(BYTE * pIn,int len,BYTE * pOut,int * outlen) ;
+	void UnInitMxpeg() ;
+	void InitMxpeg();
+protected:
+	mxm::smart<mx::IMxPEGParser> parser;
+	mx::IFileWriter *writer;
+};
+
+void CMxpegDecode::DecodeMxpeg(BYTE * pIn, int len, BYTE * pOut, int * outlen) 
+{
+	mxm::sendStatusMessage(mxm::DebugMessage, mxmString("Decode"));
+
+	int outBufSize = *outlen;
+	*outlen = 0;
+
+	parser->setBuffer(pIn);
+	writer->setOutLength(outBufSize);
+	writer->setOutBuffer(pOut);
+	writer->setOutLengthPointer(outlen);
+	parser->processStreamBytes(len);
+}
+
+void CMxpegDecode::UnInitMxpeg() 
+{
+	mxm::sendStatusMessage(mxm::DebugMessage, mxmString("UnInit"));
+
+	writer->shutdown();
+
+	// we're done, smart pointer will handle clean-up...
+
+	if(writer->errorState()) {
+
+		std::fprintf(stderr, "*** failed!\n");
+		//std::exit(2);
+	}
+	else {
+
+		//std::exit(0);
+	}
+	mxm::removeStatusMessageHandlers();
 }
 
 
-int list_components() {
-   
-   mxm::smart<mxmStringList>
-    component_ids = mx::Framework::framework()->enumerateComponents();
-   int num_components = mx::Framework::framework()->numComponents(),
-       num_anonymous  = num_components - component_ids->size();
-   
-   if(component_ids->size())
-    std::puts(("   " + component_ids->concatenate("\n   ")).text());
-   std::puts((mxmString(num_components)
-               + " components installed, "
-               + num_anonymous + " anonymous").text());
-    
-   return(0);
-}
-
-
-
-int main(int argc, char **argv) {
-   
-   mxm::addStatusMessageHandler(new mxmNopStatusMessageHandler());
+//int Testmain(int argc, char **argv,char * pIn) {
+void CMxpegDecode::InitMxpeg() 
+{
+/*   mxm::addStatusMessageHandler(new mxmNopStatusMessageHandler());*/
                        // make sure we won't get mxm status messages on _stdout_
-   
-   mxmApplication mxm_app(argc, argv);
-   mx::Framework mx_framework(mxpeg_sdk::createStaticallyLinkedComponents());
-           // this demo program uses the simple statically linked MxPEG SDK case
-   
-   mxmString prog_name = argv[0];   // TODO...
-   
-   // get arguments...
-   if(argc > 2) return(dump_usage(prog_name));
-   mxmPerlStyleHash args;
-   if(argc == 2) args = mxmPerlStyleHash::fromCommandLineArg(argv[1]);
-   if(   !args["help"].isNull()
-      || !args["--help"].isNull())
-    return(dump_usage(prog_name));
-   if(   !args["list_components"].isNull()
-      || !args["--list_components"].isNull())
-    return(list_components());
-   if(!args["if"].length()) args["if"] = "-";
-   if(!args["of"].length()) args["of"] = "-";
-   
-   // set up input...
-   mx::IStreamSourceFile *source
-     = dynamic_cast<mx::IStreamSourceFile *>
-        (mx::Framework::newComponentInstance(MX_ISTREAMSOURCEFILE_ID));
-   if(args["if"] == "-")
-    source->setFileDescriptor(STDIN_FILENO);
-   else
-    source->setFilename(args["if"]);
-   source->activate();
-   
-   // set up output...
-   mx::IFileWriter *writer
-     = dynamic_cast<mx::IFileWriter *>
-        (mx::Framework::newComponentInstance(MX_IFILEWRITER_ID));
-   
-   // configure processing...
-   
-   int file_num = 0;
-   if(args["file_num"].length()) args["file_num"].toInt(file_num);
-   if(file_num < 0) file_num = 0;
-   
-   mx::IUndecodedMxPEGFrameReceiver *frame_receiver;
-   mxmString format = args["format"],
-             outfile_extension;
-   if(   (format == "rgb")
-      || (format == "rgb_stream")
-      || (format == "yuv")
-      || (format == "yuv_stream")) {
-      
-      mx::IMxPEGRawFrameDumper
-       *dumper = dynamic_cast<mx::IMxPEGRawFrameDumper *>
-                  (mx::Framework
-                   ::newComponentInstance(MX_IMXPEGRAWFRAMEDUMPER_ID));
-      dumper->setSegmentedStreamReceiver(writer);
-      
-      mx::IMxPEGScanDecoder
-       *scan_decoder = dynamic_cast<mx::IMxPEGScanDecoder *>
-                        (mx::Framework
-                          ::newComponentInstance(MX_IMXPEGSCANDECODER_ID));
-      scan_decoder->setMxPEGTileReceiver(dumper);
-      frame_receiver = scan_decoder;
-      
-      if(!format.subString("_stream"))
-       writer->writeIndividualFiles(file_num);
-      
-      if(format.subString("rgb")) {
-         
-         outfile_extension = ".rgb";
-      }
-      else {
-         
-         dumper->enableYUVDumps(true);
-         
-         outfile_extension = ".yv12";
-      }
-   }
-   else {
-      
-      mx::IMxPEGScanToJPEGConverter
-       *converter = dynamic_cast<mx::IMxPEGScanToJPEGConverter *>
-                     (mx::Framework
-                       ::newComponentInstance(MX_IMXPEGSCANTOJPEGCONVERTER_ID));
-      converter->setSegmentedStreamReceiver(writer);
-      frame_receiver = converter;
-      
-      if(format == "jpeg") {
-         
-         writer->writeIndividualFiles(file_num);
-         
-         outfile_extension = ".jpg";
-      }
-      else {
-         
-         outfile_extension = ".mjpg";
-      }
-   }
-   
-   if(args["separator"].length())
-    writer->setSegmentSeparator(args["separator"]);
-   
-   if(args["of"] == "-")
-    writer->setFileDescriptor(STDOUT_FILENO);
-   else
-    writer->setFilename(args["of"] + outfile_extension);
-   
-   mxm::smart<mx::IMxPEGParser>
-    parser = mx::Framework::getComponent(MX_IMXPEGPARSER_ID);
-   parser->setStreamSource(source);
-   parser->setUndecodedMxPEGFrameReceiver(frame_receiver);
-   
-   // codec configuration is set up!
-   // note that all allocated resources are now covered by RAII - we won't have
-   // to do any explicit cleanup later...
-   
-   // do processing...
-   while(   parser->sourceStillUp()
-         && !writer->errorState())
-    parser->processStreamBytes(2048);
-   
-   writer->shutdown();
-   
-   // we're done, smart pointer will handle clean-up...
-   
-   if(writer->errorState()) {
-      
-      std::fprintf(stderr, "*** failed!\n");
-      std::exit(2);
-   }
-   else {
-      
-      std::exit(0);
-   }
+
+	// Un-comment these 2 following lines to get all messages out via OutputDebugStringA, which you can see using sysinternals DbgView.exe
+	//mxm::DefaultStatusMessageLevel = mxm::StatusMessageType::DesperateDebugMessage;
+	//mxm::addStatusMessageHandler(new DebugMessageHandler);
+
+	mxm::sendStatusMessage(mxm::DebugMessage, mxmString("Init"));
+
+	writer = dynamic_cast<mx::IFileWriter *>(dynamic_cast<mxmObject *>( new mx::FileWriter()));
+
+	mx::IUndecodedMxPEGFrameReceiver *frame_receiver;
+	mxmString format ="yuv",outfile_extension;
+
+	mx::IMxPEGRawFrameDumper
+		*dumper  
+		= dynamic_cast<mx::IMxPEGRawFrameDumper *>(dynamic_cast<mxmObject *>( new mx::MxPEGRawFrameDumper()));
+
+	dumper->setSegmentedStreamReceiver(writer);
+
+	mx::IMxPEGScanDecoder *scan_decoder = dynamic_cast<mx::IMxPEGScanDecoder *>(dynamic_cast<mxmObject *>( new mx::MxPEGScanDecoderSoftwareOnly()));
+
+	scan_decoder->setMxPEGTileReceiver(dumper);
+	frame_receiver = scan_decoder;
+
+	writer->writeIndividualFiles(0);
+
+	dumper->enableYUVDumps(true);
+
+	outfile_extension = ".yv12";
+
+	writer->setFileDescriptor(STDOUT_FILENO);
+
+	mx::IMxPEGParser * p = dynamic_cast<mx::IMxPEGParser *>(dynamic_cast<mxmObject *>( new mx::MxPEGParser()));
+	parser = p;
+
+	parser->setUndecodedMxPEGFrameReceiver(frame_receiver);
+}
+
+__declspec(dllexport) void * InitMxpeg()
+{
+	CMxpegDecode * p = new CMxpegDecode();
+	p->InitMxpeg();
+	return (void *)p;
+}
+
+__declspec(dllexport) void DecodeMxpeg(void * pObject,BYTE * pIn,int len,BYTE * pOut,int * outlen)
+{
+	CMxpegDecode * p = (CMxpegDecode*)pObject;
+	p->DecodeMxpeg(pIn,len,pOut,outlen);
+}
+
+__declspec(dllexport) void UnInitMxpeg(void * pObject)
+{
+	CMxpegDecode * p = (CMxpegDecode*)pObject;
+	p->UnInitMxpeg();
+	delete p;
 }

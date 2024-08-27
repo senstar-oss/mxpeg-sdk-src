@@ -108,8 +108,8 @@ const char *mx::Framework::ObsoletesHintKey = "_obsoletes";
  */
 mx::Framework::Framework(mxmList *statically_linked_components) {
    
-   if(s_pFramework) mxm::terminal("framework instance already instantiated!",
-                                  this);
+    if(s_pFramework) mxm::terminal("framework instance already instantiated!",
+                                   this);
    
    mxm::sendStatusMessage(mxm::StatusMessage,
                           "MOBOTIX SDK component framework initializing...",

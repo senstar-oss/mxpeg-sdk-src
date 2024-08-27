@@ -244,22 +244,29 @@ void mx::StreamFile::receiveStreamBytes(const mxm::u8 *bytes,
   if(ErrorEncountered) return;
   
   // have to do it tricky to properly handle short writes...
-  int written,
-      to_write;
-  to_write = byte_num;
-  while(to_write > 0) {
+//   int written,
+//       to_write;
+//   to_write = byte_num;
+  //while(to_write > 0) 
+  {
   
-    written = write(FD, bytes, to_write);
-    if(written == -1) {
-      
-      // TODO : handle signal impacts?
-      
-      ErrorEncountered = true;
-      break;
-    }
-    
-    to_write -= written;
-    bytes += written;
+	 BYTE * buffer = this->getOutBuffer();
+	 int * p_pos = this->getOutLengthPointer();
+	 int max = this->getOutLength() - *p_pos;
+	 memcpy(buffer+(*p_pos), bytes, min(max(0, max), byte_num));
+	 *p_pos += byte_num;
+//    written = write(FD, bytes, to_write);
+//     if(written == -1) {
+//       
+//       // TODO : handle signal impacts?
+//       
+//       ErrorEncountered = true;
+//       break;
+//     }
+//     
+	//written = to_write;
+    //to_write -= written;
+    bytes += byte_num;
   }
 }
 

@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>mxgconv</ProjectName>
+    <ProjectGuid>{5034E99D-C243-3693-963F-03EBE053EAB6}</ProjectGuid>
+    <RootNamespace>mxgconv_debug</RootNamespace>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    <OutDir>$(SolutionDir)..\..\..\aira\_Bin</OutDir>
+    <IntDir>obj\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_DEBUG</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)..\..\..\aira\_Bin</OutDir>
+    <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    <LinkIncremental>true</LinkIncremental>
+    <IntDir>obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <WarningLevel>0</WarningLevel>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>-Zm200 -EHsc -w34100 -w34189 -Zm200 -EHsc -w34100 -w34189 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\shared;..\Framework\include;..\mxmQt\include;..\mxm\include;..\mxpeg_sdk\include;..\..\bin_dist\inc;.;$(QTDIR)\mkspecs\win32-msvc2005;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_LARGEFILE_SUPPORT;__MX_DEBUG__;__MXM_DEBUG__;MX_PLATFORM_WINDOWS;_CRT_SECURE_NO_DEPRECATE;MX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AssemblerListingLocation>obj\debug\</AssemblerListingLocation>
+      <ObjectFileName>obj\debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_LARGEFILE_SUPPORT;__MX_DEBUG__;__MXM_DEBUG__;MX_PLATFORM_WINDOWS;_CRT_SECURE_NO_DEPRECATE;MX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>/LIBPATH:../bin_dist/bin/win32;ws2_32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>..\..\..\aira\_Bin\mxgconv_DEBUG.dll</OutputFile>
+      <Version>0.90</Version>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <ImportLibrary>$(SolutionDir)..\..\..\aira\lib\Mobotix\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <WarningLevel>0</WarningLevel>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+    </Midl>
+    <ClCompile>
+      <AdditionalOptions>-Zm200 -EHsc -w34100 -w34189 -Zm200 -EHsc -w34100 -w34189 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>..\shared;..\Framework\include;..\mxmQt\include;..\mxm\include;..\mxpeg_sdk\include;..\..\bin_dist\inc;.;$(QTDIR)\mkspecs\win32-msvc2005;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QT_NO_DEBUG;NDEBUG;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;MX_PLATFORM_WINDOWS;_CRT_SECURE_NO_DEPRECATE;MX_STATIC_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <AssemblerListingLocation>obj\release\</AssemblerListingLocation>
+      <ObjectFileName>obj\release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat />
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>QT_NO_DEBUG;NDEBUG;UNICODE;WIN32;QT_LARGEFILE_SUPPORT;MX_PLATFORM_WINDOWS;_CRT_SECURE_NO_DEPRECATE;MX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>/LIBPATH:../bin_dist/bin/win32;ws2_32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>..\..\..\aira\_Bin\mxgconv.dll</OutputFile>
+      <Version>0.90</Version>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <ImportLibrary>$(SolutionDir)..\..\..\aira\lib\Mobotix\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\MxPEGCoreComponent\BufferedMxPEGDecoderBackEnd.cpp" />
+    <ClCompile Include="..\MxPEGCoreComponent\DiagnosticsMxPEGTileReceiver.cpp" />
+    <ClCompile Include="..\IOKitComponent\FileWriter.cpp" />
+    <ClCompile Include="..\Framework\Framework.cpp" />
+    <ClCompile Include="..\MxPEGCoreComponent\mxcpcHuffmanTree.cpp" />
+    <ClCompile Include="mxgconv.cpp" />
+    <ClCompile Include="..\mxm\core\mxm_generic_stuff.cpp" />
+    <ClCompile Include="..\mxm\core\mxmApplication.cpp" />
+    <ClCompile Include="..\mxm\core\mxmAudioBlockInfo.cpp" />
+    <ClCompile Include="..\mxm\core\mxmBuffer.cpp" />
+    <ClCompile Include="..\mxm\core\mxmConfigSection.cpp" />
+    <ClCompile Include="..\mxm\core\mxmContainer.cpp" />
+    <ClCompile Include="..\mxm\core\mxmDate.cpp" />
+    <ClCompile Include="..\mxm\core\mxmDefaultSynchronizationFactory.cpp" />
+    <ClCompile Include="..\mxm\core\mxmException.cpp" />
+    <ClCompile Include="..\mxm\core\mxmFrameInfo.cpp" />
+    <ClCompile Include="..\mxm\core\mxmHuffmanTableId.cpp" />
+    <ClCompile Include="..\mxm\core\mxmInterface.cpp" />
+    <ClCompile Include="..\mxm\core\mxmIntModN.cpp" />
+    <ClCompile Include="..\mxm\core\mxmIPAddress.cpp" />
+    <ClCompile Include="..\mxm\core\mxmList.cpp" />
+    <ClCompile Include="..\mxm\core\mxmLocalEndian.cpp" />
+    <ClCompile Include="..\mxm\core\mxmNonCopyable.cpp" />
+    <ClCompile Include="..\mxm\core\mxmNopStatusMessageHandler.cpp" />
+    <ClCompile Include="..\mxm\core\mxmNumberSet.cpp" />
+    <ClCompile Include="..\mxm\core\mxmObject.cpp" />
+    <ClCompile Include="..\mxm\core\mxmPerlStyleHash.cpp" />
+    <ClCompile Include="..\mxm\core\mxmQtSignal.cpp" />
+    <ClCompile Include="..\mxm\core\mxmQtSlot.cpp" />
+    <ClCompile Include="..\mxm\core\mxmSmartHandleCore.cpp" />
+    <ClCompile Include="..\mxm\core\mxmString.cpp" />
+    <ClCompile Include="..\mxm\core\mxmStringDecider.cpp" />
+    <ClCompile Include="..\mxm\core\mxmStringList.cpp" />
+    <ClCompile Include="..\mxm\core\mxmThreadConditionVariable.cpp" />
+    <ClCompile Include="..\mxm\core\mxmThreadLock.cpp" />
+    <ClCompile Include="..\mxm\core\mxmTime.cpp" />
+    <ClCompile Include="..\mxm\core\mxmTypeDecider.cpp" />
+    <ClCompile Include="..\mxm\core\mxmUndecodedMxPEGFrameDescriptor.cpp" />
+    <ClCompile Include="..\MxPEGCoreComponent\MxPEGParser.cpp" />
+    <ClCompile Include="..\MxPEGCoreComponent\MxPEGRawFrameDumper.cpp" />
+    <ClCompile Include="..\MxPEGCoreComponent\MxPEGScanDecoderSoftwareOnly.cpp" />
+    <ClCompile Include="..\MxPEGCoreComponent\MxPEGScanDecoderSoftwareOnlyCore.cpp" />
+    <ClCompile Include="..\MxPEGCoreComponent\MxPEGScanToJPEGConverterSoftwareOnly.cpp" />
+    <ClCompile Include="..\mxpeg_sdk\static_component_bootstrap.cpp" />
+    <ClCompile Include="..\IOKitComponent\StreamFile.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Framework\include\Framework\Framework.h" />
+    <ClInclude Include="..\IOKitComponent\include\FileWriter.h" />
+    <ClInclude Include="..\IOKitComponent\include\GetConfigSection.h" />
+    <ClInclude Include="..\IOKitComponent\include\GetWebPage.h" />
+    <ClInclude Include="..\IOKitComponent\include\HTTPGetStreamSource.h" />
+    <ClInclude Include="..\IOKitComponent\include\HTTPGetStreamSourceCore.h" />
+    <ClInclude Include="..\IOKitComponent\include\KeyChain.h" />
+    <ClInclude Include="..\IOKitComponent\include\StreamFile.h" />
+    <ClInclude Include="..\IPPAcceleratedMxPEGComponent\include\MxPEGScanDecoderIPP.h" />
+    <ClInclude Include="..\IPPAcceleratedMxPEGComponent\include\MxPEGScanDecoderIPPCore.h" />
+    <ClInclude Include="..\IPPAcceleratedMxPEGComponent\include\MxPEGScanToJPEGConverterIPP.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxm_colorspaces.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxm_core_platform_macros.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxm_generic_stuff.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxm_jpeg.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxm_macros.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxm_smart.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxm_types.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmApplication.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmAudioBlockInfo.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmBidirectionalIteratorInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmBuffer.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmConditionVariableInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmConfigSection.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmContainer.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmContainerInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmDate.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmDecider.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmDefaultSynchronizationFactory.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmException.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmFrameInfo.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmHuffmanTableId.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmIntModN.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmIPAddress.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmIteratorInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmList.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmLocalEndian.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmLockInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmMutableBidirectionalIteratorInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmMutableIteratorInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmNonCopyable.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmNopStatusMessageHandler.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmNumberSet.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmObject.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmPerlStyleHash.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmQtSignal.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmQtSlot.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmRelationDecider.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmSmartHandle.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmSmartHandleCore.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmStatusMessageHandlerInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmString.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmStringDecider.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmStringList.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmSynchronizationFactoryInterface.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmThreadConditionVariable.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmThreadLock.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmTime.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmTypeDecider.h" />
+    <ClInclude Include="..\mxm\include\mxm\core\mxmUndecodedMxPEGFrameDescriptor.h" />
+    <ClInclude Include="..\mxmQt\include\mxmQt\mxm_qt.h" />
+    <ClInclude Include="..\mxmQt\include\mxmQt\mxm_qt_platform_macros.h" />
+    <ClInclude Include="..\mxpeg_sdk\include\mxpeg_sdk\static_component_bootstrap.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\BufferedMxPEGDecoderBackEnd.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\DiagnosticsMxPEGTileReceiver.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\mxcpcHuffmanTree.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\MxPEGParser.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\MxPEGRawFrameDumper.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\MxPEGScanDecoderSoftwareOnly.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\MxPEGScanDecoderSoftwareOnlyCore.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\MxPEGScanToJPEGConverterSoftwareOnly.h" />
+    <ClInclude Include="..\MxPEGCoreComponent\include\SimpleMxPEGRenderer.h" />
+    <ClInclude Include="mxgconv.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

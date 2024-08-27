@@ -254,6 +254,9 @@ void mx::FileWriter::shutdown() {
 void mx::FileWriter::openFile() {
    
    File = new mx::StreamFile();
+   File->setOutLength(m_iLen);
+   File->setOutBuffer(m_pBuffer);
+   File->setOutLengthPointer(m_pLen);
    File->setWriteMode(true);
    
    if(FileDescriptor >= 0) {
