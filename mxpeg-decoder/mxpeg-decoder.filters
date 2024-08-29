@@ -30,7 +30,7 @@
     <ClCompile Include="..\MxPEGCoreComponent\mxcpcHuffmanTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mxgconv.cpp">
+    <ClCompile Include="mxpeg-decoder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\mxm\core\mxm_generic_stuff.cpp">

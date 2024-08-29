@@ -10,7 +10,7 @@ SUBDIRS      = mxm \
                Framework \
                IOKitComponent \
                MxPEGCoreComponent \
-               mxgconv
+               mxpeg-decoder
 
 
 !mx_no_ipp {
