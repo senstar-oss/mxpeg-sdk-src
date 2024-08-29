@@ -11,9 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>mxgconv</ProjectName>
+    <ProjectName>mxpeg-decoder</ProjectName>
     <ProjectGuid>{5034E99D-C243-3693-963F-03EBE053EAB6}</ProjectGuid>
-    <RootNamespace>mxgconv_debug</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -122,7 +121,7 @@
     <ClCompile Include="..\IOKitComponent\FileWriter.cpp" />
     <ClCompile Include="..\Framework\Framework.cpp" />
     <ClCompile Include="..\MxPEGCoreComponent\mxcpcHuffmanTree.cpp" />
-    <ClCompile Include="mxgconv.cpp" />
+    <ClCompile Include="mxpeg-decoder.cpp" />
     <ClCompile Include="..\mxm\core\mxm_generic_stuff.cpp" />
     <ClCompile Include="..\mxm\core\mxmApplication.cpp" />
     <ClCompile Include="..\mxm\core\mxmAudioBlockInfo.cpp" />
@@ -237,7 +236,7 @@
     <ClInclude Include="..\MxPEGCoreComponent\include\MxPEGScanDecoderSoftwareOnlyCore.h" />
     <ClInclude Include="..\MxPEGCoreComponent\include\MxPEGScanToJPEGConverterSoftwareOnly.h" />
     <ClInclude Include="..\MxPEGCoreComponent\include\SimpleMxPEGRenderer.h" />
-    <ClInclude Include="mxgconv.h" />
+    <ClInclude Include="mxpeg-decoder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

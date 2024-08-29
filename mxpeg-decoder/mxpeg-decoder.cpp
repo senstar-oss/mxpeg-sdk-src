@@ -86,7 +86,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-#include "mxgconv.h"
+#include "mxpeg-decoder.h"
 
 #include "../IOKitComponent/include/FileWriter.h"
 #include "../IOKitComponent/include/StreamFile.h"
