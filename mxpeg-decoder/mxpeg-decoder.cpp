@@ -169,6 +169,8 @@ public:
 	void DecodeMxpeg(BYTE * pIn,int len,BYTE * pOut,int * outlen) ;
 	void UnInitMxpeg() ;
 	void InitMxpeg();
+	// Assumes both pointers are valid.
+	void GetDecodedFrameDimensions(int* width, int* height);
 protected:
 	mxm::smart<mx::IMxPEGParser> parser;
 	mx::IFileWriter *writer;
@@ -251,20 +253,31 @@ void CMxpegDecode::InitMxpeg()
 	parser->setUndecodedMxPEGFrameReceiver(frame_receiver);
 }
 
-__declspec(dllexport) void * InitMxpeg()
+void CMxpegDecode::GetDecodedFrameDimensions(int* width, int* height)
+{
+	parser->getDecodedFrameDimensions(width, height);
+}
+
+__declspec(dllexport) void * mxpeg_decoder_init()
 {
 	CMxpegDecode * p = new CMxpegDecode();
 	p->InitMxpeg();
 	return (void *)p;
 }
 
-__declspec(dllexport) void DecodeMxpeg(void * pObject,BYTE * pIn,int len,BYTE * pOut,int * outlen)
+__declspec(dllexport) DecodedFrameInfo mxpeg_decoder_decode(void * pObject,BYTE * pIn,int len,BYTE * pOut,int * outlen)
 {
 	CMxpegDecode * p = (CMxpegDecode*)pObject;
 	p->DecodeMxpeg(pIn,len,pOut,outlen);
+	
+	DecodedFrameInfo decodedInfo = {};
+	if (outlen > 0) {
+		p->GetDecodedFrameDimensions(&decodedInfo.width, &decodedInfo.height);
+	}
+	return decodedInfo;
 }
 
-__declspec(dllexport) void UnInitMxpeg(void * pObject)
+__declspec(dllexport) void mxpeg_decoder_deinit(void * pObject)
 {
 	CMxpegDecode * p = (CMxpegDecode*)pObject;
 	p->UnInitMxpeg();

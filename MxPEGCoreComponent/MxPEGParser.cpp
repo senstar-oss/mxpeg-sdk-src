@@ -803,8 +803,14 @@ void mx::MxPEGParser::activate() {
    
    if(Active)         mxm::terminal("already active!",
                                     this);
-   if(!FrameReceiver) mxm::terminal("no frame receiver configured!",
+  if(!FrameReceiver) mxm::terminal("no frame receiver configured!",
                                     this);
    
    Active = true;
+}
+
+void mx::MxPEGParser::getDecodedFrameDimensions(int* width, int* height)
+{
+  *width = Width;
+  *height = Height;
 }
