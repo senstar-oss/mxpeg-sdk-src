@@ -124,10 +124,8 @@ namespace mx {
   class IMxPEGParser: public virtual IProcessesStream,
                       public virtual ISendsUndecodedMxPEGFrames,
                       public virtual IErrorState {
-      
-      // Senstar additions: mechanism to let upstream application know the resolution through the decoder
-      // Only valid if the frame was properly decoded.
       public:
+        // Senstar additions: mechanism to let upstream application know the resolution through the decoder
         virtual void getDecodedFrameDimensions(int* width, int* height) = 0;
   };
 };

@@ -236,7 +236,7 @@ namespace mx {
       //! Private helper method.
       bool doScan(void);
       //! Helper.
-      void activate();      
+      void activate();
    };
 };
 
