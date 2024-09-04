@@ -808,3 +808,9 @@ void mx::MxPEGParser::activate() {
    
    Active = true;
 }
+
+void mx::MxPEGParser::getDecodedFrameDimensions(int* width, int* height)
+{
+  *width = Width;
+  *height = Height;
+}

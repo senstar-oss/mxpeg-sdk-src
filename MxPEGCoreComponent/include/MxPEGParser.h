@@ -221,6 +221,10 @@ namespace mx {
       //! (Re)implemented.
       void setErrorState();
       
+      //! Senstar additions to let upstream application know of frame dimensions
+      //! Assumes both pointers are valid.
+      void getDecodedFrameDimensions(int *width, int *height) override;
+
     private:
       //! Internally used to pump raw MxPEG stream data into the parsr's state
       //! machine.
