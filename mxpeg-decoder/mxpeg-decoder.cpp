@@ -166,7 +166,7 @@ public:
 	CMxpegDecode(){};
 	~CMxpegDecode(){};
 
-	void DecodeMxpeg(BYTE * pIn,int len,BYTE * pOut,int * outlen) ;
+	void DecodeMxpeg(unsigned char * pIn, int len, unsigned char * pOut, int * outlen) ;
 	void UnInitMxpeg() ;
 	void InitMxpeg();
 	// Assumes both pointers are valid.
@@ -176,7 +176,7 @@ protected:
 	mx::IFileWriter *writer;
 };
 
-void CMxpegDecode::DecodeMxpeg(BYTE * pIn, int len, BYTE * pOut, int * outlen) 
+void CMxpegDecode::DecodeMxpeg(unsigned char * pIn, int len, unsigned char * pOut, int * outlen) 
 {
 	mxm::sendStatusMessage(mxm::DebugMessage, mxmString("Decode"));
 
@@ -265,7 +265,7 @@ __declspec(dllexport) void * mxpeg_decoder_init()
 	return (void *)p;
 }
 
-__declspec(dllexport) DecodedFrameInfo mxpeg_decoder_decode(void * pObject,BYTE * pIn,int len,BYTE * pOut,int * outlen)
+__declspec(dllexport) DecodedFrameInfo mxpeg_decoder_decode(void * pObject, unsigned char * pIn,int len, unsigned char * pOut,int * outlen)
 {
 	CMxpegDecode * p = (CMxpegDecode*)pObject;
 	p->DecodeMxpeg(pIn,len,pOut,outlen);
