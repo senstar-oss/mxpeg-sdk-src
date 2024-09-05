@@ -265,7 +265,7 @@ __declspec(dllexport) void * mxpeg_decoder_init()
 	return (void *)p;
 }
 
-__declspec(dllexport) DecodedFrameInfo mxpeg_decoder_decode(void * pObject,BYTE * pIn,int len,BYTE * pOut,int * outlen)
+__declspec(dllexport) DecodedFrameInfo mxpeg_decoder_decode(void * pObject, unsigned char * pIn,int len, unsigned char * pOut,int * outlen)
 {
 	CMxpegDecode * p = (CMxpegDecode*)pObject;
 	p->DecodeMxpeg(pIn,len,pOut,outlen);
